@@ -1,21 +1,34 @@
 package br.com.diegoalves.javaweb.service;
 
-import br.com.diegoalves.javaweb.repository.LoginRepository;
+import br.com.diegoalves.javaweb.model.Usuario;
+import br.com.diegoalves.javaweb.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService {
 
-    LoginRepository loginRepository;
-    String loginBase = "admin";
-    String senhaBase = "1234";
-    public boolean validaLogin(String login, String senha) {
-        return loginValido(login, senha);
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public LoginService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-    public boolean loginValido(String login, String senha) {
-        if(login.equals(loginBase) && senha.equals(senhaBase)) {
-            return true;
+
+    public Usuario autenticar(String login, String senha) {
+        Usuario usuario = usuarioRepository.findByLogin(login);
+
+        if (usuario == null) {
+            return null;
         }
-        return false;
+
+        boolean senhaCorreta = passwordEncoder.matches(senha, usuario.getSenha());
+
+        if (senhaCorreta) {
+            return usuario;
+        }
+
+        return null;
     }
 }

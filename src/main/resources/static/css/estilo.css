@@ -1,0 +1,93 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f4f7;
+}
+
+.pagina {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #cccccc;
+}
+
+.card-grande {
+    max-width: 800px;
+}
+
+h1 {
+    margin-top: 0;
+    text-align: center;
+}
+
+label, input, textarea {
+    display: block;
+    width: 100%;
+}
+
+input, textarea {
+    margin: 6px 0 16px;
+    padding: 10px;
+}
+
+button, .botao {
+    display: inline-block;
+    padding: 10px 16px;
+    color: white;
+    background: #2563eb;
+    border: 0;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.acoes {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.campos {
+    display: flex;
+    gap: 16px;
+}
+
+.campos div {
+    flex: 1;
+}
+
+table {
+    width: 100%;
+    margin-top: 24px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #dddddd;
+    text-align: left;
+}
+
+.icone {
+    padding: 0;
+    color: inherit;
+    background: none;
+    text-decoration: none;
+}
+
+.erro {
+    color: #b91c1c;
+}
