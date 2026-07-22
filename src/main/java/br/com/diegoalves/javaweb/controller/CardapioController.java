@@ -22,22 +22,13 @@ public class CardapioController {
     }
 
     @GetMapping("/home")
-    public String mostrarHome(@RequestParam(required = false) Long editar,
-                              HttpSession session,
+    public String mostrarHome(HttpSession session,
                               Model model) {
         if (session.getAttribute("usuarioId") == null) {
             return "redirect:/";
         }
 
         model.addAttribute("itens", cardapioService.listarTodos());
-
-        if (editar != null) {
-            ItemCardapio item = cardapioService.buscarPorId(editar);
-
-            if (item != null) {
-                model.addAttribute("itemEdicao", item);
-            }
-        }
 
         return "home";
     }
@@ -53,13 +44,33 @@ public class CardapioController {
             return "redirect:/";
         }
 
-        cardapioService.salvar(id, nome, descricao, preco, usuarioId);
+        if (id == null) {
+            cardapioService.incluir(nome, descricao, preco, usuarioId);
+        } else {
+            cardapioService.alterar(id, nome, descricao, preco);
+        }
+
         return "redirect:/home";
     }
 
     @GetMapping("/cardapio/{id}/editar")
-    public String editar(@PathVariable Long id) {
-        return "redirect:/home?editar=" + id;
+    public String editar(@PathVariable Long id,
+                         HttpSession session,
+                         Model model) {
+        if (session.getAttribute("usuarioId") == null) {
+            return "redirect:/";
+        }
+
+        ItemCardapio item = cardapioService.buscarPorId(id);
+
+        if (item == null) {
+            return "redirect:/home";
+        }
+
+        model.addAttribute("itemEdicao", item);
+        model.addAttribute("itens", cardapioService.listarTodos());
+
+        return "home";
     }
 
     @PostMapping("/cardapio/{id}/excluir")

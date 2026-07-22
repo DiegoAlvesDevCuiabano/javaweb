@@ -9,7 +9,13 @@
 <main class="card card-grande">
     <h1>Cardápio</h1>
 
-    <p>Olá, <strong th:text="${session.usuarioLogin}">usuário</strong>!</p>
+    <div class="topo">
+        <p>Olá, <strong th:text="${session.usuarioLogin}">usuário</strong>!</p>
+
+        <form method="post" action="/logout">
+            <button class="botao-secundario" type="submit">Sair</button>
+        </form>
+    </div>
 
     <form method="post" action="/cardapio">
         <input name="id" type="hidden" th:value="${itemEdicao?.id}">

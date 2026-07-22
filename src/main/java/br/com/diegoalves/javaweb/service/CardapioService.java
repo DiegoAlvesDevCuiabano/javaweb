@@ -29,19 +29,18 @@ public class CardapioService {
         return itemRepository.findItemCardapioById(id);
     }
 
-    public void salvar(Long id, String nome, String descricao, BigDecimal preco, Long usuarioId) {
-        if (id == null) {
-            Usuario usuario = usuarioRepository.findUsuarioById(usuarioId);
+    public void incluir(String nome, String descricao, BigDecimal preco, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findUsuarioById(usuarioId);
 
-            if (usuario == null) {
-                throw new IllegalArgumentException("Usuário não encontrado");
-            }
-
-            ItemCardapio novoItem = new ItemCardapio(nome, descricao, preco, usuario);
-            itemRepository.save(novoItem);
-            return;
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuário não encontrado");
         }
 
+        ItemCardapio novoItem = new ItemCardapio(nome, descricao, preco, usuario);
+        itemRepository.save(novoItem);
+    }
+
+    public void alterar(Long id, String nome, String descricao, BigDecimal preco) {
         ItemCardapio item = itemRepository.findItemCardapioById(id);
 
         if (item == null) {
