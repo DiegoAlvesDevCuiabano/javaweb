@@ -10,7 +10,7 @@
 <main class="card">
     <h1>Entrar</h1>
 
-    <p class="erro" th:if="${erro}" th:text="${erro}"></p>
+    <p class="erro" th:if="${param.erro}">Usuário ou senha inválidos.</p>
 
     <form method="post" th:action="@{/login}">
         <label for="usuario">Usuário:</label>

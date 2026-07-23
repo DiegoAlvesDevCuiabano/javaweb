@@ -10,32 +10,33 @@
     <h1>Cardápio</h1>
 
     <div class="topo">
-        <p>Olá, <strong th:text="${session.usuarioLogin}">usuário</strong>!</p>
+        <p>Olá, <strong th:text="${usuarioLogin}">usuário</strong>!</p>
 
-        <form method="post" action="/logout">
+        <form method="post" th:action="@{/logout}">
             <button class="botao-secundario" type="submit">Sair</button>
         </form>
     </div>
 
-    <form method="post" action="/cardapio">
-        <input name="id" type="hidden" th:value="${itemEdicao?.id}">
+    <form id="form-cardapio" method="post" th:action="@{/cardapio}" novalidate>
+        <input name="id" type="hidden" th:value="${item.id}">
 
         <div class="campos">
             <div>
                 <label for="nome">Nome:</label>
-                <input id="nome" name="nome" type="text" th:value="${itemEdicao?.nome}" required>
+                <input id="nome" name="nome" type="text" maxlength="100"
+                       th:value="${item.nome}">
             </div>
 
             <div>
                 <label for="preco">Preço:</label>
-                <input id="preco" name="preco" type="number" min="0" step="0.01"
-                       th:value="${itemEdicao?.preco}" required>
+                <input id="preco" name="preco" type="number" step="0.01"
+                       th:value="${item.preco}">
             </div>
         </div>
 
         <label for="descricao">Descrição:</label>
-        <textarea id="descricao" name="descricao" rows="3"
-                  th:text="${itemEdicao?.descricao}"></textarea>
+        <textarea id="descricao" name="descricao" rows="3" maxlength="255"
+                  th:text="${item.descricao}"></textarea>
 
         <button type="submit">Salvar</button>
     </form>
@@ -72,5 +73,14 @@
     </table>
 </main>
 
+<div id="alerta" class="modal escondido" role="alert">
+    <div class="modal-conteudo">
+        <h2>Verifique os dados</h2>
+        <p id="mensagem-alerta"></p>
+        <button id="fechar-alerta" type="button">Entendi</button>
+    </div>
+</div>
+
+<script th:src="@{/js/validacao-cardapio.js}"></script>
 </body>
 </html>

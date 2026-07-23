@@ -1,34 +1,33 @@
 package br.com.diegoalves.javaweb.service;
 
-import br.com.diegoalves.javaweb.model.Usuario;
 import br.com.diegoalves.javaweb.repository.UsuarioRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import br.com.diegoalves.javaweb.model.Usuario;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginService {
+public class LoginService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public LoginService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public LoginService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    public Usuario autenticar(String login, String senha) {
+    @Override
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByLogin(login);
 
         if (usuario == null) {
-            return null;
+            throw new UsernameNotFoundException("Usuário não encontrado");
         }
 
-        boolean senhaCorreta = passwordEncoder.matches(senha, usuario.getSenha());
-
-        if (senhaCorreta) {
-            return usuario;
-        }
-
-        return null;
+        return User.withUsername(usuario.getLogin())
+                .password(usuario.getSenha())
+                .roles("USER")
+                .build();
     }
 }

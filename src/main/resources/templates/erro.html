@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro</title>
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body class="pagina">
+
+<main class="card">
+    <h1>Não foi possível concluir</h1>
+    <p class="erro" th:text="${mensagem}">Ocorreu um erro.</p>
+    <a class="botao" th:href="@{/home}">Voltar para o cardápio</a>
+</main>
+
+</body>
+</html>

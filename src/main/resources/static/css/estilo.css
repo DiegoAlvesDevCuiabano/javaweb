@@ -101,3 +101,25 @@ th, td {
 .erro {
     color: #b91c1c;
 }
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #00000080;
+}
+
+.modal-conteudo {
+    width: 90%;
+    max-width: 360px;
+    padding: 24px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.escondido {
+    display: none;
+}

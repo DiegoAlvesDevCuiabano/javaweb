@@ -1,16 +1,20 @@
 package br.com.diegoalves.javaweb.controller;
 
+import br.com.diegoalves.javaweb.dto.ItemCardapioDTO;
+import br.com.diegoalves.javaweb.exception.ItemNaoEncontradoException;
+import br.com.diegoalves.javaweb.exception.ValidacaoException;
 import br.com.diegoalves.javaweb.model.ItemCardapio;
 import br.com.diegoalves.javaweb.service.CardapioService;
-import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.math.BigDecimal;
 
 @Controller
 public class CardapioController {
@@ -22,32 +26,34 @@ public class CardapioController {
     }
 
     @GetMapping("/home")
-    public String mostrarHome(HttpSession session,
+    public String mostrarHome(Authentication authentication,
                               Model model) {
-        if (session.getAttribute("usuarioId") == null) {
-            return "redirect:/";
-        }
-
+        model.addAttribute("usuarioLogin", authentication.getName());
+        model.addAttribute("item", new ItemCardapioDTO());
         model.addAttribute("itens", cardapioService.listarTodos());
 
         return "home";
     }
 
     @PostMapping("/cardapio")
-    public String salvar(@RequestParam(required = false) Long id,
-                          @RequestParam String nome,
-                          @RequestParam String descricao,
-                          @RequestParam BigDecimal preco,
-                          HttpSession session) {
-        Long usuarioId = (Long) session.getAttribute("usuarioId");
-        if (usuarioId == null) {
-            return "redirect:/";
+    public String salvar(@Valid @ModelAttribute("item") ItemCardapioDTO dto,
+                          BindingResult resultado,
+                          Authentication authentication) {
+        if (resultado.hasErrors()) {
+            FieldError erro = resultado.getFieldError();
+            String mensagem = "Os dados informados são inválidos.";
+
+            if (erro != null) {
+                mensagem = erro.getDefaultMessage();
+            }
+
+            throw new ValidacaoException(mensagem);
         }
 
-        if (id == null) {
-            cardapioService.incluir(nome, descricao, preco, usuarioId);
+        if (dto.getId() == null) {
+            cardapioService.incluir(dto, authentication.getName());
         } else {
-            cardapioService.alterar(id, nome, descricao, preco);
+            cardapioService.alterar(dto);
         }
 
         return "redirect:/home";
@@ -55,30 +61,29 @@ public class CardapioController {
 
     @GetMapping("/cardapio/{id}/editar")
     public String editar(@PathVariable Long id,
-                         HttpSession session,
+                         Authentication authentication,
                          Model model) {
-        if (session.getAttribute("usuarioId") == null) {
-            return "redirect:/";
-        }
-
         ItemCardapio item = cardapioService.buscarPorId(id);
 
         if (item == null) {
-            return "redirect:/home";
+            throw new ItemNaoEncontradoException();
         }
 
-        model.addAttribute("itemEdicao", item);
+        ItemCardapioDTO dto = new ItemCardapioDTO();
+        dto.setId(item.getId());
+        dto.setNome(item.getNome());
+        dto.setDescricao(item.getDescricao());
+        dto.setPreco(item.getPreco());
+
+        model.addAttribute("usuarioLogin", authentication.getName());
+        model.addAttribute("item", dto);
         model.addAttribute("itens", cardapioService.listarTodos());
 
         return "home";
     }
 
     @PostMapping("/cardapio/{id}/excluir")
-    public String excluir(@PathVariable Long id, HttpSession session) {
-        if (session.getAttribute("usuarioId") == null) {
-            return "redirect:/";
-        }
-
+    public String excluir(@PathVariable Long id) {
         cardapioService.excluir(id);
         return "redirect:/home";
     }
